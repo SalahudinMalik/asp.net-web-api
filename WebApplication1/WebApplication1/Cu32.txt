@@ -1,0 +1,128 @@
+Attribute VB_Name = "ConvertUnits"
+Option Explicit
+
+Public Declare Function CUConvertUnit Lib "CU32.DLL" _
+        Alias "_CUConvertUnit@20" (ByVal x1 As Long, _
+                                   ByVal s1 As String, FromVal As Double, _
+                                   ByVal s3 As String, ToVal As Double) _
+                                   As Long
+
+Public Declare Function CUGetPQName Lib "CU32.DLL" _
+        Alias "_CUGetPQName@8" (ByVal x1 As Long, ByVal s1 As String) As Long
+
+Public Declare Function CUGetTotalPQs Lib "CU32.DLL" _
+        Alias "_CUGetTotalPQs@0" () As Long
+
+Public Declare Function CUGetTotalUnits Lib "CU32.DLL" _
+        Alias "_CUGetTotalUnits@4" (ByVal x1 As Long) As Long
+
+Public Declare Function CUGetUnitName Lib "CU32.DLL" _
+        Alias "_CUGetUnitName@12" (ByVal x1 As Long, ByVal x2 As Long, _
+                                   ByVal s1 As String) As Long
+
+Public Declare Function CUSearchUnit Lib "CU32.DLL" _
+        Alias "_CUSearchUnit@4" (ByVal s1 As String) As Long
+
+Public Declare Function CUSearchPQ Lib "CU32.DLL" _
+        Alias "_CUSearchPQ@4" (ByVal s1 As String) As Long
+
+Public Declare Function CUGetConvFactor Lib "CU32.DLL" _
+        Alias "_CUGetConvFactor@20" (ByVal x1 As Long, _
+                                     ByVal x2 As Long, _
+                                     ConvFactor As Double, _
+                                     ConvFactorDivBy As Double, _
+                                     ConvFactorOffSet As Double) _
+                                     As Long
+'
+' Maximum number of PQs available
+'
+Public Const gMAXPQs = 70
+
+Public Const CU_Angle = 1
+Public Const CU_Area = 2
+Public Const CU_Bond_Work_Index = 3
+Public Const CU_Calorific_Value_Mass = 4
+Public Const CU_Calorific_Value_Vol = 5
+Public Const CU_Conductivity = 6
+Public Const CU_Density = 7
+Public Const CU_Diffusivity = 8
+Public Const CU_Dipole_Moment = 9
+Public Const CU_Energy = 10
+Public Const CU_Enthalpy = 11
+Public Const CU_Entrainment = 12
+Public Const CU_Entropy = 13
+Public Const CU_Flowrate_Enthalpy = 14
+Public Const CU_Flowrate_Mass = 15
+Public Const CU_Flowrate_Volume = 16
+Public Const CU_Force = 17
+Public Const CU_Fouling_Factor = 18
+Public Const CU_Frequency = 19
+Public Const CU_Head = 20
+Public Const CU_Heat_Flux = 21
+Public Const CU_Heat_Transfer_Coeff = 22
+Public Const CU_Length = 23
+Public Const CU_Mass_Trans_Coef = 24
+Public Const CU_Mass_Per_Unit_Area = 25
+Public Const CU_Mass_Per_Unit_Length = 26
+Public Const CU_Mass = 27
+Public Const CU_Molar_Flowrate = 28
+Public Const CU_Molecular_Weight = 29
+Public Const CU_Momentum_Flux = 30
+Public Const CU_Power_Duty = 31
+Public Const CU_Pressure = 32
+Public Const CU_Spec_Heat_Cap_Mass = 33
+Public Const CU_Spec_Heat_Cap_Vol = 34
+Public Const CU_Specific_Area = 35
+Public Const CU_Specific_Volume = 36
+Public Const CU_Surface_Tension = 37
+Public Const CU_Temperature_Difference = 38
+Public Const CU_Temperature = 39
+Public Const CU_Thermal_Cond = 40
+Public Const CU_Time = 41
+Public Const CU_Velocity_Linear = 42
+Public Const CU_Velocity_Rotational = 43
+Public Const CU_Viscosity_Dynamic = 44
+Public Const CU_Viscosity_Kinematic = 45
+Public Const CU_Volume_Flowrate_Area = 46
+Public Const CU_Volume_Flowrate_Length = 47
+Public Const CU_Volume = 48
+Public Const CU_One_Absolute_Temp = 49
+Public Const CU_One_Length = 50
+Public Const CU_One_Time = 51
+Public Const CU_One_Area = 52
+
+Public Const CU_Acceleration = 53
+Public Const CU_Coef_of_Expansion = 54
+Public Const CU_Heat_Release_Rate = 55
+Public Const CU_Mass_Flux = 56
+Public Const CU_Mass_Release_Rate = 57
+Public Const CU_Mass_Transfer_Coef_Partial_Press = 58
+Public Const CU_Angular_Momentum = 59
+Public Const CU_Linear_Momentum = 60
+Public Const CU_Moment_of_Inertia = 61
+Public Const CU_Specific_Area_Mass = 62
+Public Const CU_Volumetric_Wetting_Rate = 63
+Public Const CU_FS_Factor = 64
+Public Const CU_Pressure_Gradient = 65
+'
+' Added new categories and units as requested by BP (Joni's email dated 26th Nov 2008 & 4th Mar 2009)
+'
+Public Const CU_Angular_Acceleration = 66
+Public Const CU_Number = 67
+Public Const CU_GOR = 68
+Public Const CU_Valve_Flow_Coefficient = 69
+Public Const CU_Inflow_Performance = 70
+Public Sub CU_NullTrim(ByRef s1 As String)
+
+    Dim lPos As Integer
+    Dim lNull As String * 1
+    
+    If Len(Trim(s1)) > 0 Then
+    
+      lPos = InStr(s1, lNull)
+      s1 = Trim(Left(s1, lPos - 1))
+    Else
+      s1 = Trim(s1)
+    End If
+
+End Sub
